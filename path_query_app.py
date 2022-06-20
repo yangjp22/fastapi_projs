@@ -5,7 +5,7 @@
 @Description: Path params and Query params
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query, Path
 from enum import Enum
 from typing import Union
 
@@ -52,3 +52,43 @@ async def get_item_cnt(item_id: int, q: str, skip: int = 0, limit: Union[str, No
         'skip': skip,
         'limit': limit
     }
+
+@app.get('/items/')
+async def read_items(q: Union[str, None] = None):
+    results = {
+        'items': [
+            {'item_id': 'Foo'},
+            {'item_id': 'Bar'}
+        ]
+    }
+    if q:
+        results.update({'q': q})
+    return results
+
+@app.get('/query_items/')
+async def read_items(
+        q: Union[str, None] = Query(
+            default=...,
+            max_length=50,
+            # min_length=4,
+            title="qTitle",
+            deprecated=True,
+            description='qDescr',
+            alias='q-param'
+        )
+):
+    results = {
+        'items': [
+            {'item_id': 'Foo'},
+            {'item_id': 'Bar'}
+        ]
+    }
+    if q:
+        results.update({'q': q})
+    return results
+
+@app.get('/paths/{path_id}')
+async def get_path(
+        path_id: int = Path(title='The ID of the item to get', lt=10)
+):
+    return {'path_id': path_id + 10}
