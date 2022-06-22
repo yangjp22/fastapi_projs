@@ -2,7 +2,7 @@
 """
 @Created on: 2022-06-20, Mon, 17:45
 @Author: Jinpeng Yang
-@Description: Body Request
+@Description: Request Body
 """
 
 from fastapi import FastAPI, Query, Path, Body
