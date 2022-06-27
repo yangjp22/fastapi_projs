@@ -206,6 +206,8 @@ def create_access_token(*, data: dict, expires_delta: Union[timedelta, None] = N
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta
     to_encode.update({"exp": expire})
+    # 对token进行加密，并返回加密后的token
+    # 在用户进行登陆之后 会随着响应一起传回浏览器
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
@@ -218,6 +220,8 @@ async def get_current_user_02(token: str = Depends(oauth2_schema)):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        # 首先对从浏览器传来的token进行解密
+        # payload: {token: {'access_token': xxx, 'token_type': xxx}, sub: username}
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get('sub')
         if username is None:
@@ -225,10 +229,18 @@ async def get_current_user_02(token: str = Depends(oauth2_schema)):
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
+    # 根据token，获取相关的用户信息
     user = get_user(fake_users_db_02, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
+
+
+# 获取当前活跃用户 （前提是拿到当前用户）
+async def get_current_active_user_02(current_user: User = Depends(get_current_user_02)):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
 
 
 @app.post("/token", response_model=Token)  # 生成token令牌返回给浏览器
