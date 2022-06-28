@@ -36,7 +36,7 @@ async def read_item(item_id: str):
 @router.put(
     '/{item_id}',
     tags=['custom'],
-    responss={403: {'description': 'Operation forbidden'}}
+    responses={403: {'description': 'Operation forbidden'}}
 )
 async def update_item(item_id: str):
     if item_id != 'plumbus':
