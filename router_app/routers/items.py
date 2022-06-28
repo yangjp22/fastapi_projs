@@ -26,7 +26,7 @@ async def read_items():
     return fake_items_db
 
 
-@router.get('/{item_id}', tags=['items'])
+@router.get('/{item_id}', tags=['item'])
 async def read_item(item_id: str):
     if item_id not in fake_items_db:
         raise HTTPException(status_code=400, detail="Item not found")
