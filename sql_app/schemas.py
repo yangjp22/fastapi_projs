@@ -40,4 +40,5 @@ class User(BaseModel):
     items: list[Item] = []
 
     class Config:
+        # 和数据库模型能够相互结合 可以给数据库出来的数据进行验证和筛选
         orm_mode = True

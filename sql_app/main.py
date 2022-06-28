@@ -18,6 +18,7 @@ app = FastAPI()
 
 # Dependency
 def get_db():
+    # 声明一个真实的session，并且用完时需要关闭
     db = SessionLocal()
     try:
         yield db
