@@ -23,6 +23,16 @@ async def add_process_time_header(request: Request, call_next):
     return response
 
 
+# common used middleware for db session
+# from app.db.session import Session
+# @app.middleware('http')
+# async def db_session_middleware(request: Request, call_next):
+#     request.state.db = Session()
+#     response = await call_next(request)
+#     request.state.db.close()
+#     return response
+
+
 origins = [
     'http://localhost.tiangolo.com',
     'https://localhost.tiangolo.com',
